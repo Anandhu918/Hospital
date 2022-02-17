@@ -204,18 +204,21 @@ def reg(request):
         repasswd = request.POST['repassword']
         phone = request.POST['phone']
         if passwd == repasswd:
-            if User.objects.filter(email=email).exists():
-                messages.error(request, 'Email already exists')
+            if User.objects.filter(username=uname).exists():
+                messages.error(request, 'Username already exists')
                 return redirect('signup')
             else:
-                user = User.objects.create_user(first_name=fname, last_name=lname, username=uname, email=email,
-                                                password=passwd)
-                user.save()
-                usr = User.objects.get(username=uname)
-                det = user_detls.objects.create(user_ids=usr.id, phone_number=phone)
-                det.save()
-                return redirect('login_page')
-
+                if User.objects.filter(email=email).exists():
+                    messages.error(request, 'Email already exists')
+                    return redirect('signup')
+                else:
+                    user = User.objects.create_user(first_name=fname, last_name=lname, username=uname, email=email,
+                                                    password=passwd)
+                    user.save()
+                    usr = User.objects.get(username=uname)
+                    det = user_detls.objects.create(user_ids=usr.id, phone_number=phone)
+                    det.save()
+                    return redirect('login_page')
         else:
             messages.error(request, 'Password does not match')
             return redirect('signup')
